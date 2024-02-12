@@ -23,15 +23,16 @@ trait starkPayTrait<TContractState> {
 
     fn add_service(ref self:TContractState, service_name : felt252, charge : u256, service_code : felt252, service_number: felt252);
     fn get_service(self:@TContractState, service_hash:felt252) -> Service;
-    fn checkout(ref self:TContractState,service_hash:felt252);
+    fn checkout(ref self:TContractState,service_hash:felt252,code:felt252);
     fn get_services_by_owner(self:@TContractState) -> Array<Service>;
-    fn get_checkouts_by_owner(self: @TContractState) -> Arrray<ServiceCheckOut>;
-    fn get_all_services(self: @TContractState) -> u256;
-    fn get_all_checkouts(self: @TContractState) -> u256;
+    fn get_checkouts_by_owner(self: @TContractState) -> Array<ServiceCheckOut>;
+    fn get_all_services(self: @TContractState) -> Array<Service>;
+    fn get_all_checkouts(self: @TContractState) -> Array<ServiceCheckOut>;
     fn get_user_balance(self: @TContractState) -> u256;
     fn get_token_name(self: @TContractState) -> felt252;
     fn get_token_symbol(self: @TContractState) -> felt252;
     fn set_approve_code(ref self:TContractState,code:felt252);
+    fn get_checkouts_for_service(self: @TContractState,service_hash:ContractAddress) -> Array<ServiceCheckOut>;
 
     }
 
@@ -55,7 +56,7 @@ mod StarkPay {
         checkout_count: u128,
         services_hashes_count: u128,
         checkouts_hashes_count: u128,
-        checkouts: LegacyMap::<felt252, ServiceCheckOut>,
+        checkouts: LegacyMap::<(felt252,felt252), ServiceCheckOut>,
         approve_codes: LegacyMap::<ContractAddress, codehash>,
         erc720ContractAdrress: ContractAddress,
         services_hashes:LegacyMap::<u128, felt252>,
@@ -82,13 +83,13 @@ mod StarkPay {
         service_number: felt252,
     }
 
-    #[derive(Copy, Drop, Serde, starknet::Store)]
+    #[derive(Copy, Drop,Hash, Serde, starknet::Store)]
     struct ServiceCheckOut {
         checkout_id : u128,
         user : ContractAddress,
         service_hash : felt252,
         amount: u256,
-        timestamp:u256
+        timestamp:u64
     }
 
 
@@ -117,7 +118,7 @@ mod StarkPay {
 
             self.services_count.write(new_id);
 
-            self.services.write(poseidon_hash,service)
+            self.services.write(poseidon_hash,service);
 
             let ser_hash = self.services_hashes_count.read() + 1;
 
@@ -131,36 +132,45 @@ mod StarkPay {
             self.services.read(service_hash)
         }
 
-        fn checkout(ref self:ContractState,service_hash:felt252){
+        fn checkout(ref self:ContractState,service_hash:felt252,code:felt252){
 
             let user_address = get_caller_address();
             let user_balance = IStarkPayTokenDispatcher { contract_address: self.erc720ContractAdrress.read() }.balanceOf(user_address);
             let service = self.services.read(service_hash);
+
             assert(user_balance > service.charge, 'NOT ENOUGH BALANCE'); 
 
-            let new_checkout_id = self.checkout_count.read() + 1
+            let user = CodeDetails { user: user_address, code};
 
-            let timestamp  = get_block_timestamp()
+            let code_poseidon_hash = PoseidonTrait::new().update_with(user).finalize();
+
+            assert(self.approve_codes.read(user_address) == code_poseidon_hash, 'AUTHENITIFICATION ERROR'); 
+
+            let new_checkout_id = self.checkout_count.read() + 1;
+
+            let timestamp  = get_block_timestamp();
 
             IStarkPayTokenDispatcher { contract_address: self.erc720ContractAdrress.read() }.transfer(service.owner,service.charge);
 
-            let checkout  = ServiceCheckOut {checkout_id : new_checkout_id, user : user_address,service_hash,amount: service.charge,timestamp }
-
-            self.checkouts.write(service_hash, checkout);
+            let checkout  = ServiceCheckOut {checkout_id : new_checkout_id, user : user_address,service_hash,amount: service.charge,timestamp};
 
             let poseidon_hash = PoseidonTrait::new().update_with(checkout).finalize();
 
-            self.self.checkout_count.write(new_checkout_id);
+            self.checkouts.write((service_hash,poseidon_hash), checkout);
+
+            
+
+            self.checkout_count.write(new_checkout_id);
 
             let check_hash = self.checkouts_hashes_count.read() + 1;
 
-            self.checkout_hashes.write(check_hash,service_hash);
+            self.checkout_hashes.write(check_hash,(service_hash,poseidon_hash));
 
             self.checkouts_hashes_count.write(check_hash);
 
         }
 
-        fn get_services_by_owner(self:@TContractState) -> Array<Service>{
+        fn get_services_by_owner(self:@ContractState) -> Array<Service>{
 
             let user = get_caller_address();
 
@@ -185,56 +195,96 @@ mod StarkPay {
 
             services
         }
-        fn get_checkouts_by_owner(self: @TContractState) -> ServiceCheckOut;
-        fn get_all_services(self: @TContractState) -> u256;
-        fn get_all_checkouts(self: @TContractState) -> u256;
-        fn get_user_balance(self: @TContractState) -> u256;
-        fn get_token_name(self: @TContractState) -> felt252;
-        fn get_token_symbol(self: @TContractState) -> felt252;
-        fn set_approve_code(ref self:TContractState,code:felt252);
+        fn get_checkouts_by_owner(self: @ContractState) -> Array<ServiceCheckOut>{
+            
+            let user = get_caller_address();
 
+            let mut checkouts = ArrayTrait::<ServiceCheckOut>::new();
+            let total_checkouts = self.checkouts_hashes_count.read();
 
-        fn add_service(ref self:ContractState, sub_package : felt252, channels : felt252, price : u128) {
-            let key_ = self.packages_count.read() + 1;
-             let new_package = Packages{sub_package:sub_package, channels:channels, price:price, package_id:key_};
-            self.packages.write(key_, new_package);
-            self.packages_count.write(key_);
-        }
-
-        fn get_package(self:@ContractState,key:u128) -> Packages{
-            self.packages.read(key)
-        }
-
-        fn subs_package(ref self:ContractState, package_id : u128, user : ContractAddress, key:u128, message_key:u128) {
-            let user_services = Subscription{package_id:package_id, user:user};
-            let package = self.packages.read(package_id);
-            if package.package_id == package_id {
-                self.subscriptions.write(key, user_services);
-                self.messages.write(message_key, Msg{recipient:user, msg:'Subscription successful'});
-            }
-        }
-
-        fn get_message(self:@ContractState, key:u128) -> Msg {
-            self.messages.read(key)
-        }
-
-        fn get_packages(self: @ContractState) -> Array<Packages> {
-            let mut packages = ArrayTrait::<Packages>::new();
-            let total_packages = self.packages_count.read();
             let mut count = 1;
 
-            if total_packages > 0{
+            if total_checkouts > 0{
                 loop {
-                    let package = self.packages.read(count);
-                    packages.append(package);
+                    let hash = self.checkout_hashes.read(count);
+                    let checkout = self.checkouts.read(hash);
+                    if (checkout.user == user){
+                        checkouts.append(checkout);
+                    }
                     count +=1;
-                    if(count > total_packages){
+                    if(count > total_checkouts){
                         break;
                     }
                 }
             }
-            packages
+
+            checkouts
         }
+        fn get_all_services(self: @ContractState) -> Array<Service>{
+            
+            let user = get_caller_address();
+
+            let mut services = ArrayTrait::<Service>::new();
+            let total_services = self.services_hashes_count.read();
+
+            let mut count = 1;
+
+            if total_services > 0{
+                loop {
+                    let hash = self.services_hashes.read(count);
+                    let service = self.services.read(hash);
+            
+                    services.append(service);
+                    
+                    count +=1;
+                    if(count > total_services){
+                        break;
+                    }
+                }
+            }
+
+            services
+        }
+        fn get_all_checkouts(self: @ContractState) -> Array<ServiceCheckOut>{
+
+            let user = get_caller_address();
+
+            let mut checkouts = ArrayTrait::<ServiceCheckOut>::new();
+            let total_checkouts = self.checkouts_hashes_count.read();
+
+            let mut count = 1;
+
+            if total_checkouts > 0{
+                loop {
+                    let hash = self.checkout_hashes.read(count);
+                    let checkout = self.checkouts.read(hash);
+                    
+                    checkouts.append(checkout);
+                    
+                    count +=1;
+                    if(count > total_checkouts){
+                        break;
+                    }
+                }
+            }
+
+            checkouts
+
+        }
+ 
+        fn set_approve_code(ref self:ContractState,code:felt252){
+            let user_address = get_caller_address();
+
+            let user = CodeDetails { user: user_address, code};
+
+            let poseidon_hash = PoseidonTrait::new().update_with(user).finalize();
+
+
+            self.approve_codes.write(user_address, poseidon_hash);
+
+
+        }
+
 
         fn get_token_name(self: @ContractState) -> felt252 {
             IStarkPayTokenDispatcher { contract_address: self.erc720ContractAdrress.read() }.name() 
