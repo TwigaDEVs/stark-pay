@@ -37,15 +37,18 @@ mod  StarkPayToken {
     }
 
     #[constructor]
-    fn constructor(ref self: ContractState, _owner:ContractAddress, _name: felt252, _symbol: felt252, _decimal: u8, _total_supply: u256) {
-        self.name.write(_name);
-        self.symbol.write(_symbol);
-        self.decimal.write(_decimal);
+    fn constructor(ref self: ContractState, _owner:ContractAddress) {
+
+
+        self.name.write('6013538546501050745');
+        self.symbol.write('5461072');
+        self.decimal.write(18);
         self.owner.write(_owner);
+        self.total_supply.write(1000000000000000);
 
     }
 
-    #[external(v0)]
+    #[abi(embed_v0)]
     impl IStarkPayTokenImpl of super::IStarkPayToken<ContractState> {
 
         fn name(self: @ContractState) -> felt252 {

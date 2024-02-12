@@ -32,7 +32,9 @@ trait starkPayTrait<TContractState> {
     fn get_token_name(self: @TContractState) -> felt252;
     fn get_token_symbol(self: @TContractState) -> felt252;
     fn set_approve_code(ref self:TContractState,code:felt252);
-    fn get_checkouts_for_service(self: @TContractState,service_hash:ContractAddress) -> Array<ServiceCheckOut>;
+    fn get_checkouts_for_service(self: @TContractState,service_hash_user:felt252) -> Array<ServiceCheckOut>;
+    fn tokens_transfer(ref self: TContractState, to: ContractAddress, amount: u256);
+    fn tokens_mint(ref self: TContractState, to: ContractAddress, amount: u256);
 
     }
 
@@ -57,7 +59,7 @@ mod StarkPay {
         services_hashes_count: u128,
         checkouts_hashes_count: u128,
         checkouts: LegacyMap::<(felt252,felt252), ServiceCheckOut>,
-        approve_codes: LegacyMap::<ContractAddress, codehash>,
+        approve_codes: LegacyMap::<ContractAddress, felt252>,
         erc720ContractAdrress: ContractAddress,
         services_hashes:LegacyMap::<u128, felt252>,
         checkout_hashes: LegacyMap::<u128, (felt252,felt252)>,
@@ -298,6 +300,50 @@ mod StarkPay {
             let user_address = get_caller_address();
             IStarkPayTokenDispatcher { contract_address: self.erc720ContractAdrress.read() }.balanceOf(user_address) 
         }
+
+        fn get_checkouts_for_service(self: @ContractState,service_hash_user:felt252) -> Array<ServiceCheckOut>{
+
+            let user = get_caller_address();
+
+            let mut checkouts = ArrayTrait::<ServiceCheckOut>::new();
+            let total_checkouts = self.checkouts_hashes_count.read();
+
+            let mut count = 1;
+
+            if total_checkouts > 0{
+                loop {
+                    let hash = self.checkout_hashes.read(count);
+
+                    let (service_hash,checkout_hash) = hash;
+
+                    if (service_hash_user == service_hash){
+
+                        let checkout = self.checkouts.read(hash);
+                        checkouts.append(checkout);
+
+                    } 
+                    
+                    count +=1;
+                    if(count > total_checkouts){
+                        break;
+                    }
+                }
+            }
+
+            checkouts
+        }
+
+       fn tokens_transfer(ref self: ContractState, to: ContractAddress, amount: u256){
+
+        IStarkPayTokenDispatcher { contract_address: self.erc720ContractAdrress.read() }.transfer(to,amount);
+
+       }
+
+       fn tokens_mint(ref self: ContractState, to: ContractAddress, amount: u256){
+
+        IStarkPayTokenDispatcher { contract_address: self.erc720ContractAdrress.read() }.mint(to,amount);
+
+       }
     }
 }
 
