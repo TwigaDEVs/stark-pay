@@ -1,38 +1,30 @@
-import React from 'react';
-import {Gears, ItemList } from '../../components'
+import React, { useEffect, useState } from "react";
+import { Gears, ItemList } from "../../components";
+import { useAppContext } from "../../providers/AppProvider";
 
+const Explore: React.FC = () => {
+  const { account, contract } = useAppContext();
+  const [services, setServices] = useState<null | any>([]);
+  useEffect(() => {
+    async function getService() {
+      // const contract = new Contract(CONTRACT_ABI, CONTRACT_ADDRESS, account);
 
-const Explore:React.FC = () => {
+      // console.log("this is the list");
+      if (contract) {
+        const result = await contract.get_all_services();
+        console.log(result);
+      }
+      // contract ? console.log(contract) : "contract not yet loaded";
+    }
+    getService();
+  }, [contract]);
 
-  const items = [
-    "Excavator",
-    "Bulldozer",
-    "Crane",
-    "Backhoe Loader",
-    "Dump Truck",
-    "Concrete Mixer",
-    "Skid Steer Loader",
-    "Compactor",
-    "Tower Crane",
-    "Scaffolding",
-    "Safety Gear",
-    "Harnesses and Lanyards",
-    "Power Tools",
-    "Hand Tools",
-    "Protective Clothing",
-    "Measuring Tools",
-    "Heavy-Duty Gloves",
-    "Safety Signs and Barricades",
-    "First Aid Kits",
-    "Fire Extinguishers"
- 
-  ];
-
-  console.log(items)
-  return <div>
-   <ItemList items={items}/>
-   <Gears title="Top Items"  />
-  </div>;
+  return (
+    <div>
+      {/* <ItemList items={items} /> */}
+      <Gears title="Top services" />
+    </div>
+  );
 };
 
 export default Explore;
