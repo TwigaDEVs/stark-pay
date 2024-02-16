@@ -17,7 +17,7 @@ const Services: React.FC<ServicesProps> = ({ title }) => {
     async function getCheckouts() {
       // const contract = new Contract(CONTRACT_ABI, CONTRACT_ADDRESS, account);
 
-      // console.log("this is the list");
+      console.log("this is the list");
       if (contract) {
         const result = await contract.get_all_checkouts();
         setCheckouts(result);
@@ -26,7 +26,7 @@ const Services: React.FC<ServicesProps> = ({ title }) => {
       // contract ? console.log(contract) : "contract not yet loaded";
     }
     getCheckouts();
-  }, [contract]);
+  }, [contract,setCheckouts]);
   return (
     <div className="gears section__padding">
       <div className="gears-container">

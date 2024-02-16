@@ -13,7 +13,7 @@ const Checkout = () => {
   const [codeModalIsOpened, setCodeModalIsOpened] = useState(false);
 
 
-  console.log(token_contract)
+  console.log(contract.address)
 
   async function approveCode(Code: string) {
     if (account) {
@@ -27,9 +27,11 @@ const Checkout = () => {
 
   const handleApprove = async() => {
 
+    console.log("hello")
+
     if (account) {
       const result = await token_contract.approve(
-        Number(0),
+        contract.address,
         amount
       );
       console.log(result);
@@ -129,7 +131,7 @@ const Checkout = () => {
                   />
                 </div>
                 <button
-                  onClick={() => handleApprove}
+                  onClick={handleApprove}
                   className="w3-button w3-round w3-text-white w3-border w3-green"
                 >
                   Approve
