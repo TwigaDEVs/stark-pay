@@ -145,7 +145,7 @@ mod StarkPay {
 
             let timestamp  = get_block_timestamp();
 
-            IStarkPayTokenDispatcher { contract_address: self.erc720ContractAdrress.read() }.transfer(service.owner,service.charge);
+            IStarkPayTokenDispatcher { contract_address: self.erc720ContractAdrress.read() }.transferFrom(user_address,service.owner,service.charge);
 
             let checkout  = ServiceCheckOut {checkout_id : new_checkout_id, user : user_address,service_id,amount: service.charge,timestamp};
 

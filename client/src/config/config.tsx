@@ -1,6 +1,7 @@
 import { connect, disconnect } from "starknetkit";
 import { Contract, RpcProvider } from "starknet";
 import contractJson from "../abi/starkpaycontract_StarkPay.contract_class.json";
+import tokenJson from "../abi/stark_pay_token_StarkPayToken.contract_class.json"
 
 import pragma_abi from "../assets/pragmaabi.json";
 import { Abi } from "starknet";
@@ -13,11 +14,13 @@ const ACCOUNT_ADDRESS =
 const CONTRACT_ADDRESS =
   "0x063de29cb627f5d965904d6803c90b4518caee6ed12099243fd20fd9615a3b15";
 const CONTRACT_ABI: Abi = contractJson.abi;
+const TOKEN_ABI = tokenJson.abi;
 const ERC20_ABI = "";
 // Pragma configs
 const PRAGMA_ABI = pragma_abi;
 const PRAGMA_CONTRACT_ADDRESS =
   "0x06df335982dddce41008e4c03f2546fa27276567b5274c7d0c1262f3c2b5d167";
+const TOKEN_CONTRACT_ADDRESS = "0x01438b148037d3c286559ec248f35912158675a48580b05892c6528cd18d2b7f"
 let account: any = null;
 async function connectWallet() {
   account = await connect({ webWalletUrl: "https://web.argent.xyz" });
@@ -68,5 +71,7 @@ export {
   PRAGMA_ABI,
   PRAGMA_CONTRACT_ADDRESS,
   addService,
+  TOKEN_CONTRACT_ADDRESS,
+  TOKEN_ABI,
 };
 export default connectWallet;

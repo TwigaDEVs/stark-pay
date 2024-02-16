@@ -30,11 +30,11 @@ const Gears: React.FC<GearsProps> = ({ title }) => {
   return (
     <div className="gears section__padding">
       <div className="gears-container">
-      <div className="navbar-sign">
+      <div className="">
 
           <>
           <Link to="/create"> 
-            <button type='button' className='primary-btn' >Create New</button>
+            <button type='button' className='create-service-button' >Create New</button>
           </Link>
 
           </>

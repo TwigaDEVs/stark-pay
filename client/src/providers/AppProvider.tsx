@@ -13,12 +13,15 @@ import {
   CONTRACT_ADDRESS,
   PRAGMA_ABI,
   PRAGMA_CONTRACT_ADDRESS,
+  TOKEN_CONTRACT_ADDRESS,
+  TOKEN_ABI
 } from "../config/config";
 import { modals } from "@mantine/modals";
 import { Text } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 
 const initialData = {
+  token_contract: null as any,
   contract: null as any,
   pragma_contract: null as any,
   account: null as any,
@@ -41,6 +44,7 @@ interface IAppProvider {
 
 const AppProvider = ({ children }: IAppProvider) => {
   const [contract, setContract] = useState<null | any>();
+  const [token_contract, setTokenContract] = useState<null | any>();
   const [pragma_contract, setPragmaContract] = useState<null | any>();
   const [connection, setConnection] = useState<null | any>();
   const [account, setAccount] = useState<null | any>();
@@ -117,8 +121,10 @@ const AppProvider = ({ children }: IAppProvider) => {
         PRAGMA_CONTRACT_ADDRESS,
         account
       );
+      const token_contract = new Contract(TOKEN_ABI, TOKEN_CONTRACT_ADDRESS, account);
       setPragmaContract(pragma_contract);
       setContract(contract);
+      setTokenContract(token_contract);
     }
   };
 
@@ -135,6 +141,7 @@ const AppProvider = ({ children }: IAppProvider) => {
 
   const contextValue = useMemo(
     () => ({
+      token_contract,
       contract,
       pragma_contract,
       account,

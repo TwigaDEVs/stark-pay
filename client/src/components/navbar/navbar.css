@@ -93,6 +93,18 @@
 .navbar-menu svg{
   cursor: pointer;
 }
+.create-service-button{
+  background: var(--primary-btn);
+  color: #fff;
+  border-radius: 10px;
+  font-size: 16px;
+  font-style: inherit;
+  font-weight: 600;
+  border: none;
+  padding: 10px 20px; /* Adjust padding as needed */
+  cursor: pointer; /* Show pointer cursor on hover */
+  
+}
 .navbar-menu_container{
   display: flex;
   justify-content: flex-end;

@@ -149,7 +149,10 @@ line-height: 21px;
 
   }
   .create-container h1{
-    display: none;
     margin-bottom: 20px;
   }
+}
+
+.authorize{
+  color: rgb(41, 41, 219);
 }
