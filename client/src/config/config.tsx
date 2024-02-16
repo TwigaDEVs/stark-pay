@@ -12,7 +12,7 @@ const ACCOUNT_ADDRESS =
 
 // const CONTRACT_ADDRESS = "0x010a09eb11dd5cc68012039a1923209413a96eafdefd635ac406231627464328" // main contract address
 const CONTRACT_ADDRESS =
-  "0x063de29cb627f5d965904d6803c90b4518caee6ed12099243fd20fd9615a3b15";
+  "0x056b8f4e1fae6635b7aa731ba0ac156c215ed17de41b9735ef4fad0236dac980";
 const CONTRACT_ABI: Abi = contractJson.abi;
 const TOKEN_ABI = tokenJson.abi;
 const ERC20_ABI = "";
