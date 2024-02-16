@@ -33,6 +33,14 @@ export function bigintToLongStrAddress(bigintstr: BigNumber.Value) {
     return hex_sentence;
 }
 
+
+export function bigintToLongStr(bigintstr: BigNumber.Value) {
+    if (!bigintstr) return ""
+    const bn = BigNumber(bigintstr)
+    const hex_sentence = bn.toString(16)
+    return hex_sentence;
+}
+
 export function bnCompare(bn: BigNumber.Value, b: string) {
     return BigNumber(bn).toString() === b
 }

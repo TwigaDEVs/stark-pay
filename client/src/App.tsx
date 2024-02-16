@@ -22,11 +22,11 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path=":item/:id" element={<Item />} />
           <Route path="/create" element={<Create />} />
-          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/approve-code" element={<Checkout />} />
           <Route path="/profile/:id" element={<Profile />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/items" element={<Explore />} />
+          <Route path="/services" element={<Explore />} />
         </Routes>
         <Footer />
       </AppProvider>

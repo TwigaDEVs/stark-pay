@@ -8,11 +8,11 @@ import { useAppContext } from "../../providers/AppProvider";
 
 const Menu: React.FC = () => (
   <>
-    <Link to="/items">
+    <Link to="/services">
       {" "}
       <p>Services</p>{" "}
     </Link>
-    <Link to="/my-items">
+    <Link to="/checkouts">
       {" "}
       <p> Chekouts</p>{" "}
     </Link>
@@ -54,6 +54,17 @@ const Navbar = () => {
             autoFocus={true}
           />
           <Menu />
+
+          {
+            connection ? (
+              <Link to="/approve-code">
+              {" "}
+              <p> Approve </p>{" "}
+            </Link>
+            ):(
+              <></>
+            )
+          }
         </div>
       </div>
       <div className="navbar-sign">
@@ -73,7 +84,45 @@ const Navbar = () => {
           </button>
         </>
       </div>
-      <div className="navbar-menu"></div>
+      <div className="navbar-menu">
+        {toggleMenu ? 
+        <RiCloseLine  color="#fff" size={27} onClick={() => setToggleMenu(false)} /> 
+        : <RiMenu3Line color="#fff" size={27} onClick={() => setToggleMenu(true)} />}
+        {toggleMenu && (
+          <div className="navbar-menu_container scale-up-center" >
+            <div className="navbar-menu_container-links">
+             <Menu />
+             {
+            connection ? (
+              <Link to="/approve-code">
+              {" "}
+              <p> Approve </p>{" "}
+            </Link>
+            ):(
+              <></>
+            )}
+            </div>
+            <div className="navbar-menu_container-links-sign">
+            <>
+          <button
+            type="button"
+            className="primary-btn"
+            onClick={handleConnetWalletBtnClick}
+          >
+            {connection
+              ? limitChars(
+                  address,
+                  isSmallScreen ? 5 : 10,
+                  isSmallScreen ? false : true
+                )
+              : "Connect Wallet"}
+          </button>
+        </>
+           
+            </div>
+            </div>
+        )}
+      </div>
     </div>
   );
 };

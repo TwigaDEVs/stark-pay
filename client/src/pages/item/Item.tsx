@@ -5,6 +5,7 @@ import creator from "../../assets/profile.png";
 import item from "../../assets/item1.jpg";
 import { useAppContext } from "../../providers/AppProvider";
 import {
+  bigintToLongStr,
   bigintToLongStrAddress,
   bigintToShortStr,
   encoder,
@@ -20,7 +21,6 @@ const Item: React.FC = () => {
   const { account, contract } = useAppContext();
   const [services, setServices] = useState<null | any>({});
   const [modalIsOpened, setModalIsOpened] = useState(false);
-  const [serviceHash, setServiceHash] = useState<null | any>("");
   const [code, setCode] = useState<null | any>();
   useEffect(() => {
     async function getService() {
@@ -34,28 +34,26 @@ const Item: React.FC = () => {
         });
         const singleService = data[0];
         setServices(singleService);
-        const getHash = await contract.get_service_hash(id);
-        setServiceHash(getHash);
       }
       // contract ? console.log(contract) : "contract not yet loaded";
     }
     getService();
-  }, [contract, serviceHash]);
+  }, [contract]);
 
   const handleCheckout = async () => {
     if (account) {
       // const contract = new Contract(CONTRACT_ABI, CONTRACT_ADDRESS, account);
-      console.log(bigintToShortStr(serviceHash));
       const result = await contract.checkout(
-        bigintToShortStr(serviceHash),
+        Number(id),
         code
       );
       console.log(result);
       // toast.success("transaction executed successfull!");
     }
+    setModalIsOpened(false);
   };
 
-  console.log(serviceHash && serviceHash);
+
   return (
     <div className="item section__padding">
       {/* <div className="item-image">
@@ -65,7 +63,7 @@ const Item: React.FC = () => {
         <div className="w3-modal" style={{ display: "block" }}>
           <div className="w3-modal-content w3-padding">
             <div className="w3-container">
-              <p>serviceHash: {serviceHash && serviceHash.toString()}</p>
+              <p>Service: {services.service_name && bigintToShortStr(services.service_name)}</p>
               <div className="formGroup">
                 <label>code</label>
                 <input
@@ -78,7 +76,7 @@ const Item: React.FC = () => {
               </div>
               <button
                 onClick={handleCheckout}
-                className="w3-button w3-round w3-text-green w3-border w3-border-green"
+                className="w3-button w3-round w3-text-white w3-border w3-green"
               >
                 Proceed
               </button>

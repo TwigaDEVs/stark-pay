@@ -23,6 +23,7 @@ const Explore: React.FC = () => {
     <div>
       {/* <ItemList items={items} /> */}
       <Gears title="Top services" />
+      
     </div>
   );
 };

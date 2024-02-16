@@ -11,7 +11,7 @@ const ACCOUNT_ADDRESS =
 
 // const CONTRACT_ADDRESS = "0x010a09eb11dd5cc68012039a1923209413a96eafdefd635ac406231627464328" // main contract address
 const CONTRACT_ADDRESS =
-  "0x03df552f299df22eabed56d2440e39b5d5ad78ba594b48f3c320ea2eda25dc6e";
+  "0x063de29cb627f5d965904d6803c90b4518caee6ed12099243fd20fd9615a3b15";
 const CONTRACT_ABI: Abi = contractJson.abi;
 const ERC20_ABI = "";
 // Pragma configs

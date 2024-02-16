@@ -30,6 +30,16 @@ const Gears: React.FC<GearsProps> = ({ title }) => {
   return (
     <div className="gears section__padding">
       <div className="gears-container">
+      <div className="navbar-sign">
+
+          <>
+          <Link to="/create"> 
+            <button type='button' className='primary-btn' >Create New</button>
+          </Link>
+
+          </>
+
+          </div>
         <div className="gears-container-text">
           <h1>{title}</h1>
         </div>
@@ -49,7 +59,7 @@ const Gears: React.FC<GearsProps> = ({ title }) => {
                       </p>
                       <br />
                       <p style={{ fontSize: "40px" }}>
-                        {service.charge.toString()}
+                        {service.charge.toString()} STP
                       </p>
                     </Link>
                   </div>
