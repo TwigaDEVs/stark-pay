@@ -85,7 +85,7 @@ const Checkout = () => {
                   onChange={(e) => {
                     setCode(e.target.value);
                   }}
-                  placeholder="Item Name"
+                  placeholder=""
                   autoFocus={true}
                 />
               </div>
@@ -120,7 +120,7 @@ const Checkout = () => {
                   <label>Allowable Amount</label>
                   <input
                     type="number"
-                    placeholder="Item Name"
+                    placeholder="Item e"
                     onChange={(e) => {
                       setAmount(e.target.value);
                     }}

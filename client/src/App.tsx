@@ -9,6 +9,7 @@ import {
   Register,
   Explore,
   Checkout,
+  Checkouts,
 } from "./pages";
 import { Routes, Route } from "react-router-dom";
 import AppProvider from "./providers/AppProvider";
@@ -27,6 +28,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/services" element={<Explore />} />
+          <Route path="/checkouts" element={<Checkouts />} />
         </Routes>
         <Footer />
       </AppProvider>

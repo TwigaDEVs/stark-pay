@@ -6,3 +6,4 @@ export { default as Login } from "./login/Login";
 export { default as Register } from "./register/Register";
 export { default as Explore } from "./explore/Explore";
 export { default as Checkout } from "./checkout/Checkout";
+export { default as Checkouts } from "./checkouts/Checkouts";

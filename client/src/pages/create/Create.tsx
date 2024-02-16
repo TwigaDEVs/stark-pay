@@ -52,7 +52,7 @@ const Create = () => {
                 setServiceName(e.target.value);
               }}
               value={serviceName}
-              placeholder="Item Name"
+              placeholder="Service Name"
               autoFocus={true}
             />
           </div>
@@ -60,7 +60,7 @@ const Create = () => {
             <label>charge</label>
             <input
               type="number"
-              placeholder="Item Name"
+              placeholder="amount"
               onChange={(e) => {
                 setCharge(e.target.value);
               }}
@@ -76,7 +76,7 @@ const Create = () => {
               onChange={(e) => {
                 setServiceCode(e.target.value);
               }}
-              placeholder="Item Name"
+              placeholder=""
               autoFocus={true}
             />
           </div>
@@ -88,7 +88,7 @@ const Create = () => {
               onChange={(e) => {
                 setServiceNumber(e.target.value);
               }}
-              placeholder="Item Name"
+              placeholder=""
               autoFocus={true}
             />
           </div>
